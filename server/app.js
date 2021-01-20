@@ -78,12 +78,44 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-app.post('/login', () => {
+app.post('/login', (req, res, next) => {
+  var username = req.body.username;
+  var password = req.body.password;
 
+  return models.Users.get({ username })
+    .then(user => {
+      if (!user) {
+        throw 'User does not exist';
+      }
+      return models.Users.compare(password, user.password, user.salt);
+    })
+    .then(userExists => {
+      if (!userExists) {
+        throw 'User does not exist';
+      }
+      res.status(200).redirect('/');
+    })
+    .catch(() => {
+      res.status(404).redirect('/login');
+    });
 });
 
-app.post('/signup', () => {
+app.post('/signup', (req, res, next) => {
+  var username = req.body.username;
 
+  return models.Users.get({ username })
+    .then(user => {
+      if (user) {
+        throw user;
+      }
+      return models.Users.create(req.body);
+    })
+    .then((data) => {
+      res.status(200).redirect('/');
+    })
+    .catch((data) => {
+      res.status(200).redirect('/signup');
+    });
 });
 
 /************************************************************/
