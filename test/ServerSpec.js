@@ -39,8 +39,9 @@ describe('', function() {
     /* TODO: Update user and password if different than on your local machine            */
     /*************************************************************************************/
     db = mysql.createConnection({
-      user: 'student',
-      password: 'student',
+      host: 'localhost',
+      user: 'root',
+      password: 'charlie',
       database: 'shortly'
     });
 
