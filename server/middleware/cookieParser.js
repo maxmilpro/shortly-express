@@ -12,8 +12,6 @@ const parseCookies = (req, res, next) => {
     req.cookies[splitCookie[0]] = splitCookie[1];
   });
 
-  console.log('req.cookies: ' + JSON.stringify(req.cookies));
-
   next();
 };
 
