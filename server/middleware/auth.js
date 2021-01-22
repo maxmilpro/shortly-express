@@ -10,18 +10,36 @@ module.exports.createSession = (req, res, next) => {
         return models.Sessions.get({ id: result.insertId });
       })
       .then((session) => {
-        console.log('session: ', session);
         req.session = {};
         req.session.hash = session.hash;
+        res.cookie('shortlyid', session.hash);
         next();
       });
     // store the session in the sessions database
+  } else {
+    models.Sessions.get({ hash: req.cookies['shortlyid']})
+      .then((result) => {
+        req.session = {};
+        req.session.hash = result.hash;
+        if (result.userId) {
+          req.session.user = result.user;
+          req.session.userId = result.userId;
+        }
+        next();
+      })
+      .catch(() => {
+        models.Sessions.create()
+          .then((result) => {
+            return models.Sessions.get({ id: result.insertId });
+          })
+          .then((session) => {
+            req.session = {};
+            req.session.hash = session.hash;
+            res.cookie('shortlyid', session.hash);
+            next();
+          });
+      });
   }
-
-  // if the req has cookies
-    // if the session is valid by checking if the session in the database
-    // if the session is not valid
-      // throw err
 };
 
 /************************************************************/

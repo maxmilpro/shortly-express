@@ -481,7 +481,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Sessions and cookies', function() {
+  describe('Sessions and cookies', function() {
     var requestWithSession;
     var cookieJar;
 
@@ -531,7 +531,9 @@ describe('', function() {
       addUser(function(err, res, body) {
         if (err) { return done(err); }
         var cookies = cookieJar.getCookies('http://127.0.0.1:4568/');
+        console.log('cookies: ', cookies);
         var cookieValue = cookies[0].value;
+        console.log('cookieValue: ', cookieValue);
 
         var queryString = `
           SELECT users.username FROM users, sessions
@@ -540,6 +542,7 @@ describe('', function() {
 
         db.query(queryString, cookieValue, function(error, users) {
           if (error) { return done(error); }
+          console.log('users: ', users);
           var user = users[0];
           expect(user.username).to.equal('Vivian');
           done();
