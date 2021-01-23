@@ -20,27 +20,17 @@ app.use(Auth.createSession);
 
 
 
-app.get('/',
-  (req, res) => {
-    models.Sessions.get({ hash: req.session.hash })
-      .then(session => {
-        console.log('session: ' + JSON.stringify(session));
-        if (models.Sessions.isLoggedIn(session)) {
-          res.render('index');
-        }
-      })
-      .catch(() => {
-        console.log('error caught at app.get /');
-        res.redirect('/login');
-      });
-  });
-
-app.get('/create',
+app.get('/', Auth.verifySession,
   (req, res) => {
     res.render('index');
   });
 
-app.get('/links',
+app.get('/create', Auth.verifySession,
+  (req, res) => {
+    res.render('index');
+  });
+
+app.get('/links', Auth.verifySession,
   (req, res, next) => {
     models.Links.getAll()
       .then(links => {
@@ -91,6 +81,10 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+app.get('/login', (req, res, next) => {
+  res.render('login');
+});
+
 app.post('/login', (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
@@ -135,7 +129,6 @@ app.post('/signup', (req, res, next) => {
 });
 
 app.get('/logout', (req, res, next) => {
-  console.log('res.cookie: ' + res.cookie);
   res.clearCookie('shortlyid');
   models.Sessions.delete({ hash: req.session.hash })
     .then(() => {
