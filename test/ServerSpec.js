@@ -207,6 +207,14 @@ describe('', function() {
         done();
       });
     });
+
+    it('should get signup page when a user want to create an account', function(done) {
+      request('http://127.0.0.1:4568/signup', function(error, res, body) {
+        if (error) { return done(error); }
+        expect(res.headers.location).to.equal('/signup');
+        done();
+      });
+    });
   });
 
   describe('Account Login:', function() {
@@ -271,6 +279,14 @@ describe('', function() {
       };
 
       request(options, function(error, res, body) {
+        if (error) { return done(error); }
+        expect(res.headers.location).to.equal('/login');
+        done();
+      });
+    });
+
+    it('should get login page when a user want to login', function(done) {
+      request('http://127.0.0.1:4568/login', function(error, res, body) {
         if (error) { return done(error); }
         expect(res.headers.location).to.equal('/login');
         done();
@@ -566,6 +582,20 @@ describe('', function() {
             expect(sessions.length).to.equal(0);
             done();
           });
+        });
+      });
+    });
+
+    it('redirects to login page when a user logs out', function(done) {
+      addUser(function(err, res, body) {
+        if (err) { return done(err); }
+        var cookies = cookieJar.getCookies('http://127.0.0.1:4568/');
+        var cookieValue = cookies[0].value;
+
+        requestWithSession('http://127.0.0.1:4568/logout', function(error, response, resBody) {
+          if (error) { return done(error); }
+          expect(response.headers.location).to.equal('/login');
+          done();
         });
       });
     });

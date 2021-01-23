@@ -82,7 +82,7 @@ app.post('/links',
 /************************************************************/
 
 app.get('/login', (req, res, next) => {
-  res.render('login');
+  res.location('/login').render('login');
 });
 
 app.post('/login', (req, res, next) => {
@@ -105,6 +105,10 @@ app.post('/login', (req, res, next) => {
     .catch(() => {
       res.status(404).redirect('/login');
     });
+});
+
+app.get('/signup', (req, res, next) => {
+  res.location('/signup').render('signup');
 });
 
 app.post('/signup', (req, res, next) => {
