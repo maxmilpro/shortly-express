@@ -22,7 +22,17 @@ app.use(Auth.createSession);
 
 app.get('/',
   (req, res) => {
-    res.render('index');
+    models.Sessions.get({ hash: req.session.hash })
+      .then(session => {
+        console.log('session: ' + JSON.stringify(session));
+        if (models.Sessions.isLoggedIn(session)) {
+          res.render('index');
+        }
+      })
+      .catch(() => {
+        console.log('error caught at app.get /');
+        res.redirect('/login');
+      });
   });
 
 app.get('/create',

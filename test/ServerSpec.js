@@ -530,11 +530,8 @@ describe('', function() {
     it('assigns session to a user when user logs in', function(done) {
       addUser(function(err, res, body) {
         if (err) { return done(err); }
-        console.log('cookieJar: ', JSON.stringify(cookieJar));
         var cookies = cookieJar.getCookies('http://127.0.0.1:4568/');
-        console.log('cookies: ', JSON.stringify(cookies));
         var cookieValue = cookies[0].value;
-        console.log('cookieValue: ', cookieValue);
 
         var queryString = `
           SELECT users.username FROM users, sessions
@@ -543,7 +540,6 @@ describe('', function() {
 
         db.query(queryString, cookieValue, function(error, users) {
           if (error) { return done(error); }
-          console.log('users: ', users);
           var user = users[0];
           expect(user.username).to.equal('Vivian');
           done();
@@ -575,11 +571,12 @@ describe('', function() {
     });
   });
 
-  xdescribe('Privileged Access:', function() {
+  describe('Privileged Access:', function() {
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
         if (error) { return done(error); }
+        console.log('res.req: ' + res.req);
         expect(res.req.path).to.equal('/login');
         done();
       });
