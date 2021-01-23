@@ -530,8 +530,9 @@ describe('', function() {
     it('assigns session to a user when user logs in', function(done) {
       addUser(function(err, res, body) {
         if (err) { return done(err); }
+        console.log('cookieJar: ', JSON.stringify(cookieJar));
         var cookies = cookieJar.getCookies('http://127.0.0.1:4568/');
-        console.log('cookies: ', cookies);
+        console.log('cookies: ', JSON.stringify(cookies));
         var cookieValue = cookies[0].value;
         console.log('cookieValue: ', cookieValue);
 

@@ -113,11 +113,23 @@ app.post('/signup', (req, res, next) => {
       }
       return models.Users.create(req.body);
     })
+    .then((createdUser) => {
+      return models.Sessions.update({ hash: req.session.hash }, { userId: createdUser.insertId });
+    })
     .then((data) => {
       res.status(200).redirect('/');
     })
     .catch((data) => {
       res.status(200).redirect('/signup');
+    });
+});
+
+app.get('/logout', (req, res, next) => {
+  console.log('res.cookie: ' + res.cookie);
+  res.clearCookie('shortlyid');
+  models.Sessions.delete({ hash: req.session.hash })
+    .then(() => {
+      res.status(200).redirect('/login');
     });
 });
 
